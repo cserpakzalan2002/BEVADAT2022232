@@ -1,164 +1,186 @@
 # %%
-def column_swap(arr):
-    for i in range(len(arr)):
-        arr[i] = arr[i][::-1]
-    return arr
+import numpy as np
 
-arr = [[1, 2], [3, 4]]
-result = column_swap(arr)
-print(result)  
+def column_swap(arr):
+    # megnézzük, hogy az array valóban 2D-e
+    if arr.ndim != 2:
+        raise ValueError('Az input array-nek 2 dimenziójúnak kell lennie!')
+    
+    # oszlopok megfordítása
+    return arr[:, ::-1]
+
+
+arr = np.array([[1, 2], [3, 4]])
+swapped_arr = column_swap(arr)
+print(swapped_arr)
 
 
 # %%
-def compare_two_array(arr1, arr2):
-    equal_indices = []
-    for i in range(len(arr1)):
-        if arr1[i] == arr2[i]:
-            equal_indices.append(i)
-    return equal_indices
 
-arr1 = [7, 8, 9]
-arr2 = [9, 8, 7]
-result = compare_two_array(arr1, arr2)
-print(result)  
+
+def compare_two_array(arr1, arr2):
+    if arr1.shape != arr2.shape:
+        raise ValueError('Az input array-k méreteinek megegyezőnek kell lenniük!')
+    
+    # azonos elemek keresése
+    equal_idx = np.where(arr1 == arr2)[0]
+    
+    return equal_idx
+
+
+arr1 = np.array([7, 8, 9])
+arr2 = np.array([9, 8, 7])
+equal_idx = compare_two_array(arr1, arr2)
+print(equal_idx)
 
 
 # %%
 def get_array_shape(arr):
-    shape = []
-    while isinstance(arr, list):
-        shape.append(len(arr))
-        arr = arr[0]
-    return ", ".join([f"{dim}" for dim in shape]) + f", melyseg: {arr.ndim - len(shape)}"
-
-
-arr = [[1, 2, 3], [4, 5, 6]]
-result = get_array_shape(arr)
-print(result)  
-
-
-# %%
-import numpy as np
-
-def encode_Y(Y, num_classes):
-    encoded_Y = np.zeros((len(Y), num_classes))
-    for i in range(len(Y)):
-        encoded_Y[i, Y[i]] = 1
-    return encoded_Y
-
-
-
-# %%
-def decode_Y(encoded_Y):
-    return np.argmax(encoded_Y, axis=1)
-
-encoded_Y = np.array([[0,1,0,0], [0, 0, 1, 0], [1, 0, 0, 0], [0, 0, 0, 1]])
-decoded_Y = decode_Y(encoded_Y)
-print(decoded_Y)
-
-
-# %%
-def eval_classification(classes, probabilities):
-    return classes[np.argmax(probabilities)]
-
-classes = ['alma', 'körte', 'szilva']
-probabilities = np.array([0.2, 0.2, 0.6])
-predicted_class = eval_classification(classes, probabilities)
-print(predicted_class) 
-
-
-# %%
-def replace_odd_numbers(arr):
-     return np.where(arr % 2 == 1, -1, arr)
-
-# %%
-def replace_by_value(arr, num):
+    shape = arr.shape
+    ndim = arr.ndim
     
-    result = []
-    for elem in arr:
-        if elem < num:
-            result.append(-1)
-        else:
-            result.append(1)
-    return result
+    if ndim == 1:
+        return f'hossz: {shape[0]}, melyseg: 1'
+    elif ndim == 2:
+        return f'sor: {shape[0]}, oszlop: {shape[1]}, melyseg: 1'
+    elif ndim == 3:
+        return f'sor: {shape[0]}, oszlop: {shape[1]}, melyseg: {shape[2]}'
+    else:
+        raise ValueError('Az input array nem 1D, 2D vagy 3D!')
 
-
-arr = [1, 2, 5, 0]
-num = 2
-print(replace_by_value(arr, num)) 
+arr = np.array([[1, 2, 3], [4, 5, 6]])
+shape_str = get_array_shape(arr)
+print(shape_str)
 
 
 # %%
-def array_multi(arr):
-    result = 1
-    for elem in arr:
-        if type(elem) == list:
-            result *= array_multi(elem) # Rekurzió a több dimenziós tömbök esetére
-        else:
-            result *= elem
+
+
+def encode_Y(y, num_classes):
+    y_pred = np.zeros((len(y), num_classes))
+    
+    for i in range(len(y)):
+        y_pred[i, y[i]] = 1
+        
+    return y_pred
+
+
+y = np.array([1, 2, 0, 3])
+num_classes = 4
+
+y_pred = encode_Y(y, num_classes)
+print(y_pred)
+
+
+# %%
+
+
+def decode_Y(Y_enc):
+    return np.argmax(Y_enc, axis=1)
+
+
+
+# %%
+
+
+def eval_classification(classes, predictions):
+    max_index = np.argmax(predictions)
+    result = classes[max_index]
+    print("A legvalószínűbb osztály: ", result)
     return result
 
-arr = [1, 2, 3, 4]
-print(array_multi(arr)) 
 
 
+# %%
 
 
+def replace_odd_numbers(arr):
+    return np.where(arr % 2 == 1, -1, arr)
+
+
+# %%
+# Készíts egy olyan függvényt, ami egy array értékeit -1 és 1-re változtatja, attól függően, hogy az adott elem nagyobb vagy kisebb a paraméterként megadott számnál.\n",
+    "# Ha a szám kisebb mint a megadott érték, akkor -1, ha nagyobb vagy egyenlő, akkor pedig 1.\n",
+    "# Be: [1, 2, 5, 0], 2\n",
+    "# Ki: [-1, 1, 1, -1]\n",
+    "# replace_by_value()"
+
+# %%
+def replace_by_value(arr, val):
+    return np.where(arr < val, -1, 1)
+
+
+# %%
+
+
+def array_multi(arr):
+    return np.prod(arr)
+
+
+input_arr = [1,2,3,4]
+output = array_multi(input_arr)
+print("Input array:", input_arr)
+print("Output:", output)
+
+# %%
+def array_multi_2d(arr):
+ row_products = np.array([np.prod(row) for row in arr])
+ return row_products
+
+arr = [[1, 2], [3, 4]]
+print(array_multi_2d(arr)) # Kiír [2, 12]
 
 # %%
 
 
 def add_border(arr):
-    rows, cols = arr.shape
-    new_arr = np.zeros((rows+2, cols+2), dtype=arr.dtype)
-    new_arr[1:-1, 1:-1] = arr
-    return new_arr
+    m, n = arr.shape
+    res = np.zeros((m+2, n+2))
+    res[1:m+1, 1:n+1] = arr
+    return res
 
 
 arr = np.array([[1,2],[3,4]])
-print(add_border(arr))
-
+new_arr = add_border(arr)
+print(new_arr) # [[0. 0. 0. 0.]
 
 # %%
-
 from datetime import datetime, timedelta
 
 def list_days(start_date, end_date):
     start = datetime.strptime(start_date, '%Y-%m')
     end = datetime.strptime(end_date, '%Y-%m')
     num_days = (end - start).days + 1
-    date_array = np.array([start + timedelta(days=i) for i in range(num_days)])
-    return np.array([date.strftime('%Y-%m-%d') for date in date_array])
-
-
+    days = np.array([start + timedelta(days=i) for i in range(num_days)])
+    days_str = np.array([d.strftime('%Y-%m-%d') for d in days])
+    return days_str
+    
 start_date = '2023-03'
 end_date = '2023-04'
-days_array = list_days(start_date, end_date)
-print(days_array)
-
+result = list_days(start_date, end_date)
+print(result)
 
 # %%
 
 
-
-def current_date():
+def get_act_date():
     now = datetime.now()
-    date_str = now.strftime('%Y-%m-%d')
+    date_str = now.strftime("%Y-%m-%d")
     return np.datetime64(date_str)
 
-date = current_date()
-print(date)
+print(get_act_date())
 
 
 # %%
+
+
 import time
 
 def sec_from_1970():
-    start_time = time.mktime((1970, 1, 1, 0, 2, 0, 0, 0, 0))
-    current_time = time.time()
-    elapsed_time = current_time - start_time
-    return int(elapsed_time)
+    return int(time.time())
 
-print(sec_from_1970)
+print(sec_from_1970())
+
+
 
 
