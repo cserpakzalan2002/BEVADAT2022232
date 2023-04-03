@@ -1,0 +1,4 @@
+Azért split-elünk, hogy a meglévő adatmennyiségből maradjon megfelelő mennyiségű a teszteléshez is.
+Az euclideszi algoritmussaal számoljuk ki egy adott új adat távolságát a többitől.
+A predict függvény megjósolja, hogy melyik adathalmazhoz áll a legközelebb az új adatunk.
+Az accuracy függvény pedig kiszámolja, hogy mennyire volt pontos az új adat elhelyezése az adott adathalmazba.
